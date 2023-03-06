@@ -57,11 +57,14 @@ public class Card : MonoBehaviour
 
         #region movement code
 
-
-        //if (transform.position == targetPos.position)
-        //{
-        //    moving = false;
-        //}
+        if (transform.position == targetPos.position)
+        {
+            moving = false;
+        }
+        else
+        {
+            moving = true;
+        }
 
         transform.position = targetPos.position;
         #endregion
@@ -69,12 +72,13 @@ public class Card : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (gameManager.isPlayerTurn)
+        if (gameManager.gameState == GameManager.GameState.Playing && gameManager.isPlayerTurn)
         {
             //play card
             if (playerCard)
             {
                 Debug.Log("click");
+                played = true;
                 gameManager.PlayerTurn(this);
                 gameManager.isPlayerTurn = false;
             }
@@ -88,7 +92,7 @@ public class Card : MonoBehaviour
     private void OnMouseEnter()
     {
 
-        if (gameManager.isPlayerTurn)
+        if (gameManager.gameState == GameManager.GameState.Playing && gameManager.isPlayerTurn)
         {
             if (playerCard)
             {
@@ -103,10 +107,14 @@ public class Card : MonoBehaviour
 
     private void OnMouseExit()
     {
-        if (playerCard)
-        {
-            targetPos.position = _prevPosition;
-        }
+        //if (gameManager.gameState == GameManager.GameState.Playing && gameManager.isPlayerTurn)
+        //{
+        //    if (playerCard)
+        //    {
+        //        targetPos.position = _prevPosition;
+        //    }
+        //}
+        
         
     }
 }

@@ -2,10 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System;
 
 public class GameManager : MonoBehaviour
 {
-    enum GameState
+    public enum GameState
     {
         Shuffling, 
         Dealing,
@@ -14,7 +15,7 @@ public class GameManager : MonoBehaviour
         Resetting //foreach card, reset values
     }
 
-    GameState gameState = GameState.Shuffling;
+    public GameState gameState = GameState.Shuffling;
 
     //card prefab
     public GameObject cardObj;
@@ -84,25 +85,22 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //display score
         playerScoreDisp.text = playerScore.ToString();
         oppScoreDisp.text = opponentScore.ToString();
 
         if(gameState == GameState.Shuffling)
         {
-            if (!isShuffled)
-            {
-                ShuffleDeck();
-            }
+            ShuffleDeck();
+            gameState = GameState.Dealing;
         }
-        if(gameState == GameState.Dealing)
+        else if(gameState == GameState.Dealing)
         {
-            if (!dealt)
-            {
-                DealCards();
-            }
+            DealCards();
+            gameState = GameState.Playing;
         }
         
-        if(gameState == GameState.Playing)
+        else if(gameState == GameState.Playing)
         {
             if (!isPlayerTurn)
             {
@@ -110,15 +108,15 @@ public class GameManager : MonoBehaviour
             }
             
         }
-        if(gameState == GameState.Discarding)
+        else if(gameState == GameState.Discarding)
         {
-            if (!resultChecked)
-            {
-                CheckResult();
-            }
-            
+            CheckResult();
+            Discard();
         }
-
+        else if (gameState == GameState.Resetting)
+        {
+            ResetDeck();
+        }
 
     }
 
@@ -127,15 +125,16 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < deck.Count; i++)
         {
             GameObject tempCard = deck[i];
-            int rand = Random.Range(i, deck.Count);
+            int rand = UnityEngine.Random.Range(i, deck.Count);
             deck[i] = deck[rand];
             deck[rand] = tempCard;
             deck[i].GetComponent<Card>().targetPos = cardTargets[0];
             //it is with a heavy heart that i make the decision to hardcode every transform position index
 
-            isShuffled = true;
-            gameState = GameState.Dealing;
         }
+
+        isShuffled = true;
+        gameState = GameState.Dealing;
     }
 
     void DealCards()
@@ -170,7 +169,7 @@ public class GameManager : MonoBehaviour
 
     void OpponentTurn()
     {
-        int rand = Random.Range(0, 3);
+        int rand = UnityEngine.Random.Range(0, 3);
         opponentSelected = opponentHand[rand].GetComponent<Card>();
         opponentSelected.targetPos = cardTargets[7];
         isPlayerTurn = true;
@@ -238,23 +237,56 @@ public class GameManager : MonoBehaviour
 
             }
         }
-
+        playerSelected = null;
+        opponentSelected = null;
         resultChecked = true;
 
     }
 
-    //void Discard()
-    //{
-    //    foreach(GameObject card in playerHand)
-    //    {
-    //        discard.Add(card);
-    //        playerHand.Remove(card);
-    //    }
-    //    foreach (GameObject card in opponentHand)
-    //    {
-    //        discard.Add(card);
-    //        opponentHand.Remove(card);
-    //    }
-    //}
+    void ResetDeck()
+    {
+        foreach(GameObject card in discard)
+        {
+            deck.Add(card);
+            card.GetComponent<Card>().isFaceUp = false;
+        }
+        discard.RemoveRange(0,discard.Count);
+        gameState = GameState.Shuffling;
+    }
+
+    void Discard()
+    {
+        foreach (GameObject card in playerHand)
+        {
+            Card discardCard = card.GetComponent<Card>();
+            discardCard.targetPos = cardTargets[9];
+            discardCard.isFaceUp = true;
+            discardCard.playerCard = false;
+            discard.Add(card);
+        }
+
+        playerHand.RemoveRange(0, playerHand.Count);
+
+        foreach (GameObject card in opponentHand)
+        {
+            Card discardCard = card.GetComponent<Card>();
+            discardCard.targetPos = cardTargets[9];
+            discard.Add(card);
+            discardCard.isFaceUp = true;
+        }
+        opponentHand.RemoveRange(0, opponentHand.Count);
+        resultChecked = false;
+        dealt = false;
+        if (deckSize <= 0)
+        {
+            deckSize = 24;
+            isShuffled = false;
+            gameState = GameState.Resetting;
+        }
+        else
+        {
+            gameState = GameState.Dealing;
+        }
+    }
 
 }
