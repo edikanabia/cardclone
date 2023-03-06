@@ -92,15 +92,15 @@ public class Card : MonoBehaviour
     private void OnMouseEnter()
     {
 
-        if (gameManager.gameState == GameManager.GameState.Playing && gameManager.isPlayerTurn)
-        {
-            if (playerCard)
-            {
-                //hover
-                _prevPosition = targetPos.position;
-                targetPos.position = new Vector3(targetPos.position.x, targetPos.position.y + 0.25f);
-            }
-        }
+        //if (gameManager.gameState == GameManager.GameState.Playing && gameManager.isPlayerTurn)
+        //{
+        //    if (playerCard)
+        //    {
+        //        //hover
+        //        _prevPosition = targetPos.position;
+        //        targetPos.position = new Vector3(targetPos.position.x, targetPos.position.y + 0.25f);
+        //    }
+        //}
         
 
     }
