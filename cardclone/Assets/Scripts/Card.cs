@@ -20,10 +20,15 @@ public class Card : MonoBehaviour
 
     //movement
     public Transform targetPos;
+    Vector3 _prevPosition;
     public bool moving;
 
-    //states
+    //
     public bool playerCard = false;
+    public bool played = false;
+
+
+    GameManager gameManager;
 
 
     // Start is called before the first frame update
@@ -41,7 +46,6 @@ public class Card : MonoBehaviour
         //displays card face
         if (!isFaceUp)
         {
-            Debug.Log("face down");
             cardRenderer.sprite = sprites[3];
         }
         else
@@ -50,22 +54,50 @@ public class Card : MonoBehaviour
         }
         #endregion
 
+        #region movement code
+
+
         //if (transform.position == targetPos.position)
         //{
         //    moving = false;
         //}
 
         transform.position = targetPos.position;
-
+        #endregion
     }
 
     private void OnMouseDown()
     {
-       //play card
+        //play card
+        if (playerCard)
+        {
+            Debug.Log("click");
+            played = true;
+        }
+        
+
+        //switch state in game manager to checking
+
     }
 
-    private void OnMouseOver()
+    private void OnMouseEnter()
     {
-        //hover
+        if (playerCard)
+        {
+            //hover
+            _prevPosition = targetPos.position;
+            targetPos.position = new Vector3(targetPos.position.x, targetPos.position.y + 0.5f);
+            
+        }
+
+    }
+
+    private void OnMouseExit()
+    {
+        if (playerCard)
+        {
+            targetPos.position = _prevPosition;
+        }
+        
     }
 }
