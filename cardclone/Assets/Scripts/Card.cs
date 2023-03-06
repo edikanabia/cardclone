@@ -35,6 +35,7 @@ public class Card : MonoBehaviour
     void Start()
     {
         cardRenderer = GetComponent<SpriteRenderer>();
+        gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
         
     }
 
@@ -68,12 +69,17 @@ public class Card : MonoBehaviour
 
     private void OnMouseDown()
     {
-        //play card
-        if (playerCard)
+        if (gameManager.isPlayerTurn)
         {
-            Debug.Log("click");
-            played = true;
+            //play card
+            if (playerCard)
+            {
+                Debug.Log("click");
+                gameManager.PlayerTurn(this);
+                gameManager.isPlayerTurn = false;
+            }
         }
+        
 
         //switch state in game manager to checking
 
@@ -81,13 +87,17 @@ public class Card : MonoBehaviour
 
     private void OnMouseEnter()
     {
-        if (playerCard)
+
+        if (gameManager.isPlayerTurn)
         {
-            //hover
-            _prevPosition = targetPos.position;
-            targetPos.position = new Vector3(targetPos.position.x, targetPos.position.y + 0.25f);
-            gameManager.PlayerTurn();
+            if (playerCard)
+            {
+                //hover
+                _prevPosition = targetPos.position;
+                targetPos.position = new Vector3(targetPos.position.x, targetPos.position.y + 0.25f);
+            }
         }
+        
 
     }
 

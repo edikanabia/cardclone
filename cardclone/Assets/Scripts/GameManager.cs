@@ -47,7 +47,8 @@ public class GameManager : MonoBehaviour
     //testing bools
     bool isShuffled = false;
     bool dealt = false;
-    bool isPlayerTurn = false;
+    public bool isPlayerTurn = false;
+    bool resultChecked = false;
 
 
     // Start is called before the first frame update
@@ -93,19 +94,30 @@ public class GameManager : MonoBehaviour
                 ShuffleDeck();
             }
         }
-        
-        if(!dealt)
+        if(gameState == GameState.Dealing)
         {
-            DealCards();
+            if (!dealt)
+            {
+                DealCards();
+            }
         }
+        
         if(gameState == GameState.Playing)
         {
             if (!isPlayerTurn)
             {
                 OpponentTurn();
             }
+            
         }
-        
+        if(gameState == GameState.Discarding)
+        {
+            if (!resultChecked)
+            {
+                CheckResult();
+            }
+            
+        }
 
 
     }
@@ -122,7 +134,7 @@ public class GameManager : MonoBehaviour
             //it is with a heavy heart that i make the decision to hardcode every transform position index
 
             isShuffled = true;
-            gameState = GameState.Playing;
+            gameState = GameState.Dealing;
         }
     }
 
@@ -153,25 +165,29 @@ public class GameManager : MonoBehaviour
 
         }
         dealt = true;
+        gameState = GameState.Playing;
     }
 
     void OpponentTurn()
     {
-        opponentSelected = opponentHand[Random.Range(0, 3)].GetComponent<Card>();
+        int rand = Random.Range(0, 3);
+        opponentSelected = opponentHand[rand].GetComponent<Card>();
         opponentSelected.targetPos = cardTargets[7];
-        inPlay.Add(opponentSelected);
         isPlayerTurn = true;
     }
 
-    public void PlayerTurn()
+    public void PlayerTurn(Card clicked)
     {
-
+        playerSelected = clicked;
         playerSelected.targetPos = cardTargets[8];
         gameState = GameState.Discarding;
     }
 
     void CheckResult()
     {
+        playerSelected.isFaceUp = true;
+        opponentSelected.isFaceUp = true;
+
         //if player card is rock
         if(playerSelected.rpsType is Card.CardType.Rock)
         {
@@ -222,5 +238,23 @@ public class GameManager : MonoBehaviour
 
             }
         }
+
+        resultChecked = true;
+
     }
+
+    //void Discard()
+    //{
+    //    foreach(GameObject card in playerHand)
+    //    {
+    //        discard.Add(card);
+    //        playerHand.Remove(card);
+    //    }
+    //    foreach (GameObject card in opponentHand)
+    //    {
+    //        discard.Add(card);
+    //        opponentHand.Remove(card);
+    //    }
+    //}
+
 }
