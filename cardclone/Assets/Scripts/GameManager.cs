@@ -28,6 +28,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] List<GameObject> playerHand;
     [SerializeField] List<GameObject> opponentHand;
 
+    [SerializeField] List<Card> inPlay;
+
     Card playerSelected, opponentSelected;
 
     //score
@@ -45,6 +47,8 @@ public class GameManager : MonoBehaviour
     //testing bools
     bool isShuffled = false;
     bool dealt = false;
+    bool isPlayerTurn = false;
+
 
     // Start is called before the first frame update
     void Start()
@@ -82,14 +86,27 @@ public class GameManager : MonoBehaviour
         playerScoreDisp.text = playerScore.ToString();
         oppScoreDisp.text = opponentScore.ToString();
 
-        if(!isShuffled)
+        if(gameState == GameState.Shuffling)
         {
-            ShuffleDeck();
+            if (!isShuffled)
+            {
+                ShuffleDeck();
+            }
         }
+        
         if(!dealt)
         {
             DealCards();
         }
+        if(gameState == GameState.Playing)
+        {
+            if (!isPlayerTurn)
+            {
+                OpponentTurn();
+            }
+        }
+        
+
 
     }
 
@@ -138,8 +155,72 @@ public class GameManager : MonoBehaviour
         dealt = true;
     }
 
+    void OpponentTurn()
+    {
+        opponentSelected = opponentHand[Random.Range(0, 3)].GetComponent<Card>();
+        opponentSelected.targetPos = cardTargets[7];
+        inPlay.Add(opponentSelected);
+        isPlayerTurn = true;
+    }
+
+    public void PlayerTurn()
+    {
+
+        playerSelected.targetPos = cardTargets[8];
+        gameState = GameState.Discarding;
+    }
+
     void CheckResult()
     {
-        
+        //if player card is rock
+        if(playerSelected.rpsType is Card.CardType.Rock)
+        {
+            switch (opponentSelected.rpsType)
+            {
+                case Card.CardType.Paper:
+                    opponentScore++;
+                    break;
+                case Card.CardType.Scissors:
+                    playerScore++;
+                    break;
+                default:
+                    break;
+               
+            }
+        }
+
+        //if player card is paper
+        if (playerSelected.rpsType is Card.CardType.Paper)
+        {
+            switch (opponentSelected.rpsType)
+            {
+                case Card.CardType.Scissors:
+                    opponentScore++;
+                    break;
+                case Card.CardType.Rock:
+                    playerScore++;
+                    break;
+                default:
+                    break;
+
+            }
+        }
+
+        //if player card is scissors
+        if (playerSelected.rpsType is Card.CardType.Scissors)
+        {
+            switch (opponentSelected.rpsType)
+            {
+                case Card.CardType.Rock:
+                    opponentScore++;
+                    break;
+                case Card.CardType.Paper:
+                    playerScore++;
+                    break;
+                default:
+                    break;
+
+            }
+        }
     }
 }

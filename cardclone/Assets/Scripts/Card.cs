@@ -74,7 +74,6 @@ public class Card : MonoBehaviour
             Debug.Log("click");
             played = true;
         }
-        
 
         //switch state in game manager to checking
 
@@ -86,8 +85,8 @@ public class Card : MonoBehaviour
         {
             //hover
             _prevPosition = targetPos.position;
-            targetPos.position = new Vector3(targetPos.position.x, targetPos.position.y + 0.5f);
-            
+            targetPos.position = new Vector3(targetPos.position.x, targetPos.position.y + 0.25f);
+            gameManager.PlayerTurn();
         }
 
     }
