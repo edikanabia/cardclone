@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Card : MonoBehaviour
 {
-    bool isFaceUp = false;
+    [SerializeField] bool isFaceUp = false;
     public enum CardType
     {
         Rock,

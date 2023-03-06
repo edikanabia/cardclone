@@ -1,19 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
     //initialize info
-    int deckSize = 24; //this should always be a multiple of six
-    public GameObject cardObject;
+    int deckSize = 24;
+    public GameObject cardObject; //passes in card prefab
 
     //scorekeeping
-    int playerScore, opponentScore = 0;
+    [SerializeField] int playerScore, opponentScore = 0;
+    TMP_Text playerScoreDisplay;
+    TMP_Text opponentScoreDisplay;
+
+
 
     //keeping track of cards
-    //[SerializeField] List<Card> deck;
-    [SerializeField] List<GameObject> cardDeck; //keeps all cards on screen
+    [SerializeField] List<GameObject> cardDeck; //all cards on screen
 
     
 
@@ -22,7 +26,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //rock
+        //adds rock to deck
         for(int i = 0; i <deckSize/3; i++)
         {
             cardDeck.Add(cardObject);
@@ -31,7 +35,7 @@ public class GameManager : MonoBehaviour
             Instantiate(cardDeck[i]);
         }
 
-        //paper
+        //adds paper to deck
         for (int i = 0; i < deckSize / 3; i++)
         {
             cardDeck.Add(cardObject);
@@ -40,7 +44,7 @@ public class GameManager : MonoBehaviour
             Instantiate(cardDeck[i]);
         }
         
-        //scissors
+        //adds scissors to deck
         for (int i = 0; i < deckSize / 3; i++)
         {
             cardDeck.Add(cardObject);
@@ -49,12 +53,16 @@ public class GameManager : MonoBehaviour
             Instantiate(cardDeck[i]);
         }
 
+        playerScoreDisplay = GameObject.Find("Player Score").GetComponent<TMP_Text>();
+        opponentScoreDisplay = GameObject.Find("Opponent Score").GetComponent<TMP_Text>();
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        playerScoreDisplay.text = playerScore.ToString();
+        opponentScoreDisplay.text = opponentScore.ToString();
     }
 
 
